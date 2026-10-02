@@ -1,0 +1,366 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --background: #f8fafc;
+    --foreground: #0f172a;
+    --card: #ffffff;
+    --card-foreground: #0f172a;
+    --primary: #059669;
+    --primary-foreground: #ffffff;
+    --accent: #0284c7;
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+    --border: #e2e8f0;
+    --ring: #10b981;
+    --badge-bg: #ecfdf5;
+    --badge-text: #065f46;
+  }
+
+  .dark {
+    --background: #090d16;
+    --foreground: #f8fafc;
+    --card: #0f172a;
+    --card-foreground: #f8fafc;
+    --primary: #10b981;
+    --primary-foreground: #022c22;
+    --accent: #38bdf8;
+    --muted: #1e293b;
+    --muted-foreground: #94a3b8;
+    --border: #1e293b;
+    --ring: #34d399;
+    --badge-bg: rgba(16, 185, 129, 0.12);
+    --badge-text: #34d399;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  overflow-x: clip;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.3);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.5);
+}
+
+/* Glow and Grid Patterns */
+.bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(148, 163, 184, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.12) 1px, transparent 1px);
+}
+
+.dark .bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.dark .glass-card {
+  background: rgba(15, 23, 42, 0.65);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+.glass-surface {
+  background: rgba(255, 255, 255, 0.65);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(226, 232, 240, 0.7);
+}
+
+.dark .glass-surface {
+  background: rgba(15, 23, 42, 0.65);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(203, 213, 225, 0.8);
+  transition: all 0.25s ease;
+}
+
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(16, 185, 129, 0.7);
+  box-shadow: 0 0 20px -3px rgba(16, 185, 129, 0.25);
+}
+
+.dark .glass-input {
+  background: rgba(15, 23, 42, 0.55);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark .glass-input:focus {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(52, 211, 153, 0.7);
+  box-shadow: 0 0 20px -3px rgba(16, 185, 129, 0.35);
+}
+
+/* YouTube-Style Ambient Glow for Header & Featured Containers */
+.ambient-glow-header {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  bottom: -28px;
+  height: 48px;
+  pointer-events: none;
+  background: radial-gradient(55% 100% at 50% 0%, rgba(16, 185, 129, 0.3) 0%, rgba(6, 182, 212, 0.2) 45%, transparent 100%);
+  filter: blur(28px);
+  transform: translateZ(0);
+  will-change: opacity, transform;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark .ambient-glow-header {
+  background: radial-gradient(55% 100% at 50% 0%, rgba(16, 185, 129, 0.45) 0%, rgba(56, 189, 248, 0.3) 45%, transparent 100%);
+  filter: blur(32px);
+}
+
+.ambient-card-glow {
+  position: relative;
+}
+
+.ambient-card-glow::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(56, 189, 248, 0.2), transparent 70%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.glow-emerald {
+  box-shadow: 0 0 50px -12px rgba(16, 185, 129, 0.3);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 50px -12px rgba(56, 189, 248, 0.3);
+}
+
+@keyframes ambientPulse {
+  0%, 100% {
+    opacity: 0.85;
+    transform: scale(1) translateZ(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04) translateZ(0);
+  }
+}
+
+.animate-ambient-pulse {
+  animation: ambientPulse 8s ease-in-out infinite;
+}
+
+/* Intro Loader Keyframes (Hardware Accelerated & Guaranteed to Render) */
+@keyframes introCollideLeft {
+  0% {
+    transform: translateX(-340px) scale(0.65);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  85% {
+    transform: translateX(-16px) scale(1.08);
+  }
+  100% {
+    transform: translateX(0px) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes introCollideRight {
+  0% {
+    transform: translateX(340px) scale(0.65);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  85% {
+    transform: translateX(16px) scale(1.08);
+  }
+  100% {
+    transform: translateX(0px) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes introShockwave {
+  0% {
+    transform: scale(0.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+@keyframes introPopIn {
+  0% {
+    transform: scale(0.85) translateY(18px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes introSparkBurst {
+  0% {
+    transform: translate(0, 0) scale(1.6);
+    opacity: 1;
+  }
+  100% {
+    transform: var(--spark-target) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes introScreenShake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  15% { transform: translate(-5px, 3px) rotate(-0.5deg); }
+  30% { transform: translate(5px, -3px) rotate(0.5deg); }
+  45% { transform: translate(-4px, -2px) rotate(-0.3deg); }
+  60% { transform: translate(3px, 2px) rotate(0.2deg); }
+  75% { transform: translate(-2px, 1px) rotate(0deg); }
+}
+
+@keyframes speedLineRun {
+  0% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.8;
+  }
+  70% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+}
+
+@keyframes cyberRoadMove {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -80px 0;
+  }
+}
+
+@keyframes runnerStride {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-2deg);
+  }
+}
+
+@keyframes warpZoom {
+  0% {
+    transform: scale(1);
+    filter: blur(0px);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(1.18);
+    filter: blur(4px);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.35);
+    filter: blur(12px);
+    opacity: 0;
+  }
+}
+
+.anim-collide-left {
+  animation: introCollideLeft 1.05s cubic-bezier(0.12, 0.8, 0.32, 1) forwards;
+}
+
+.anim-collide-right {
+  animation: introCollideRight 1.05s cubic-bezier(0.12, 0.8, 0.32, 1) forwards;
+}
+
+.anim-shockwave {
+  animation: introShockwave 0.8s ease-out forwards;
+}
+
+.anim-pop-in {
+  animation: introPopIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.anim-screen-shake {
+  animation: introScreenShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.anim-speed-line {
+  animation: speedLineRun var(--speed-duration, 1.2s) linear infinite;
+}
+
+.anim-cyber-road {
+  animation: cyberRoadMove 0.4s linear infinite;
+}
+
+.anim-runner-bob {
+  animation: runnerStride 0.45s ease-in-out infinite;
+}
+
+.anim-warp-exit {
+  animation: warpZoom 0.65s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+
+
