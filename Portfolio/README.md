@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💼 Developer Portfolio — Ritesh Kumar
 
-## Getting Started
+A modern, responsive, and interactive personal developer portfolio built with **Next.js**, **React**, **Tailwind CSS**, and **TypeScript**.
 
-First, run the development server:
+[![GitHub](https://img.shields.io/badge/GitHub-ritesh--iitpatna-181717?style=flat&logo=github)](https://github.com/ritesh-iitpatna)
+[![GitHub](https://img.shields.io/badge/GitHub-riteshkumar999097--afk-181717?style=flat&logo=github)](https://github.com/riteshkumar999097-afk)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat&logo=next.js)](https://nextjs.org/)
+[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-v4-38B2AC?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **⚡ Fast & Modern**: Built on the Next.js App Router for optimal performance.
+- **🎨 Dark / Light Mode**: Seamless theme toggling with persistent user preference.
+- **💻 Interactive Terminal**: Integrated interactive terminal snippet component.
+- **📱 Fully Responsive**: Fluid layouts engineered for mobile, tablet, and desktop screens.
+- **🧩 Component-Driven**: Modular structure (Hero, About, Projects, Skills, Timeline, Contact, Footer).
+- **🔊 Sound FX Support**: Subtle audio feedback for interactive elements.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🛠️ Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Framework**: Next.js (React 19)
+- **Styling**: Tailwind CSS
+- **Language**: TypeScript
+- **Icons**: Lucide React & Custom SVGs
+- **Deployment**: Vercel / GitHub Pages
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🏁 Getting Started
 
-## Deploy on Vercel
+### Prerequisites
+- Node.js (v18 or higher recommended)
+- npm, yarn, or pnpm
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Installation
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ritesh-iitpatna/portfolio.git
+   cd portfolio
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 📬 Contact & Profiles
+
+- **Developer**: Ritesh Kumar
+- **Email**: [ritesh.iitpatna@gmail.com](mailto:ritesh.iitpatna@gmail.com)
+- **Primary GitHub**: [@ritesh-iitpatna](https://github.com/ritesh-iitpatna)
+- **Secondary GitHub**: [@riteshkumar999097-afk](https://github.com/riteshkumar999097-afk)
+
+---
+
+## 📄 License
+This project is open source and available under the [MIT License](LICENSE).
