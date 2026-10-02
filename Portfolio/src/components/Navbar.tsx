@@ -8,7 +8,6 @@ import {
   Mail,
   ArrowUpRight,
   ArrowRight,
-  RotateCcw,
   User,
   Cpu,
   FolderGit2,
@@ -18,10 +17,6 @@ import {
 import { ThemeToggle } from "./ThemeToggle";
 import { GithubIcon, LinkedinIcon } from "./Icons";
 import { portfolioData } from "@/data/portfolio-data";
-
-interface NavbarProps {
-  onReplayIntro?: () => void;
-}
 
 // Icon dictionary for navigation sections
 const navIcons: Record<string, React.ElementType> = {
@@ -33,7 +28,7 @@ const navIcons: Record<string, React.ElementType> = {
   Contact: Mail,
 };
 
-export function Navbar({ onReplayIntro }: NavbarProps) {
+export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
@@ -288,17 +283,6 @@ export function Navbar({ onReplayIntro }: NavbarProps) {
 
           {/* Right Action Icons & Theme Toggle (Desktop) */}
           <div className="hidden md:flex items-center gap-3">
-            {onReplayIntro && (
-              <button
-                onClick={onReplayIntro}
-                title="Replay Cinematic Intro"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 bg-slate-100/70 dark:bg-slate-900/60 backdrop-blur-md hover:bg-slate-200/70 dark:hover:bg-slate-800/70 border border-slate-200/80 dark:border-slate-800/80 transition-all cursor-pointer group shadow-xs"
-              >
-                <RotateCcw className="w-3.5 h-3.5 group-hover:-rotate-90 transition-transform duration-300 text-emerald-500" />
-                <span className="hidden lg:inline">Intro</span>
-              </button>
-            )}
-
             <a
               href={portfolioData.personal.socialLinks.github}
               target="_blank"
@@ -332,18 +316,6 @@ export function Navbar({ onReplayIntro }: NavbarProps) {
 
           {/* Mobile Action Controls */}
           <div className="flex items-center gap-1.5 md:hidden">
-            {onReplayIntro && (
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onReplayIntro();
-                }}
-                title="Replay Intro"
-                className="p-2 text-slate-600 dark:text-slate-300 hover:text-emerald-500 rounded-lg hover:bg-slate-100/70 dark:hover:bg-slate-800/60 backdrop-blur-sm transition-all cursor-pointer active:scale-95 touch-manipulation"
-              >
-                <RotateCcw className="w-4 h-4 text-emerald-500" />
-              </button>
-            )}
             <ThemeToggle />
             <button
               onClick={() => setMobileMenuOpen((prev) => !prev)}
