@@ -34,7 +34,7 @@ export function IntroLoader({ onComplete }: IntroLoaderProps) {
   const [isButtonPressed, setIsButtonPressed] = useState(false);
   const [runProgress, setRunProgress] = useState(0);
   const [currentMilestone, setCurrentMilestone] = useState(0);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
 
   // Sparks array for radial 360-degree impact
   const sparks = [
@@ -73,10 +73,24 @@ export function IntroLoader({ onComplete }: IntroLoaderProps) {
   useEffect(() => {
     // Synchronize mute status explicitly with sfx engine
     sfx.setMuted(isMuted);
+
+    // Modern browsers require a user gesture to resume AudioContext; listen for first interaction
+    const handleGesture = () => {
+      if (!isMuted) {
+        sfx.resumeAudioContext();
+      }
+    };
+    window.addEventListener("pointerdown", handleGesture, { once: true });
+    window.addEventListener("keydown", handleGesture, { once: true });
+    return () => {
+      window.removeEventListener("pointerdown", handleGesture);
+      window.removeEventListener("keydown", handleGesture);
+    };
   }, [isMuted]);
 
   useEffect(() => {
     // Phase 1 start sound (only plays if unmuted)
+    sfx.resumeAudioContext();
     sfx.playChargeHum();
 
     // 1 -> 2: Collision Impact at 1.05s

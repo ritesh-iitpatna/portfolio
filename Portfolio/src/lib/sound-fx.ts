@@ -4,7 +4,7 @@
 class SoundFXEngine {
   private ctx: AudioContext | null = null;
   private masterGain: GainNode | null = null;
-  private isMuted: boolean = true; // Default to true (MUTED by default)
+  private isMuted: boolean = false; // Default to false (UNMUTED by default)
 
   private init() {
     if (!this.ctx && typeof window !== "undefined") {
@@ -19,7 +19,14 @@ class SoundFXEngine {
       }
     }
     if (this.ctx && this.ctx.state === "suspended" && !this.isMuted) {
-      this.ctx.resume();
+      this.ctx.resume().catch(() => {});
+    }
+  }
+
+  public resumeAudioContext() {
+    this.init();
+    if (this.ctx && this.ctx.state === "suspended") {
+      this.ctx.resume().catch(() => {});
     }
   }
 
