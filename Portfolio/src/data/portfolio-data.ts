@@ -66,6 +66,8 @@ export const portfolioData = {
       linkedin: "https://www.linkedin.com/in/ritesh-iitpatna",
       email: "mailto:ritesh.iitpatna@gmail.com",
     },
+    resumeUrl: "/Ritesh_Kumar_Resume.pdf",
+    resumeFilename: "Ritesh_Kumar_Resume.pdf",
     summary:
       "Aspiring Software Developer with a strong foundation in Core Java, Data Structures & Algorithms, and MySQL. Skilled in problem-solving and backend development, with a focus on building efficient, scalable applications and continuously enhancing technical expertise.",
     highlights: [

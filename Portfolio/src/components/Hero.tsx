@@ -12,6 +12,7 @@ import {
 import { JavaIcon, MySQLIcon, GitIcon, GithubIcon, LinkedinIcon } from "./Icons";
 import { portfolioData } from "@/data/portfolio-data";
 import { TerminalSnippet } from "./TerminalSnippet";
+import { CVDownloadButton } from "./CVDownloadButton";
 
 // Container variant for staggered entrance
 const containerVariants: Variants = {
@@ -151,9 +152,11 @@ export function Hero() {
 
             {/* Primary Action Buttons */}
             <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-3 pt-3">
+              <CVDownloadButton variant="primary" />
+
               <a
                 href="#projects"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-slate-950 bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-300 hover:to-emerald-400 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/45 hover:-translate-y-0.5 transition-all"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 transition-all hover:-translate-y-0.5 shadow-xs"
               >
                 <span>View Projects</span>
                 <ArrowRight className="w-4 h-4" />
@@ -161,7 +164,7 @@ export function Hero() {
 
               <a
                 href="#contact"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm border border-white/50 dark:border-white/10 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md hover:bg-white/80 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 transition-all hover:-translate-y-0.5 shadow-xs"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm border border-white/50 dark:border-white/10 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md hover:bg-white/80 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 transition-all hover:-translate-y-0.5 shadow-xs"
               >
                 <Mail className="w-4 h-4 text-emerald-500" />
                 <span>Contact Me</span>
@@ -169,7 +172,7 @@ export function Hero() {
 
               <a
                 href="#education"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-white/60 dark:hover:bg-slate-800/60 backdrop-blur-sm transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-white/60 dark:hover:bg-slate-800/60 backdrop-blur-sm transition-colors"
               >
                 <FileText className="w-4 h-4" />
                 <span>Education &amp; Awards</span>

@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { GithubIcon, LinkedinIcon } from "./Icons";
+import { CVDownloadButton } from "./CVDownloadButton";
 import { portfolioData } from "@/data/portfolio-data";
 
 interface NavbarProps {
@@ -321,6 +322,8 @@ export function Navbar({ onReplayIntro }: NavbarProps) {
               <LinkedinIcon className="w-5 h-5" />
             </a>
 
+            <CVDownloadButton variant="compact" />
+
             <ThemeToggle />
 
             <button
@@ -447,15 +450,18 @@ export function Navbar({ onReplayIntro }: NavbarProps) {
                 </a>
               </div>
 
-              <motion.button
-                type="button"
-                whileTap={{ scale: 0.96 }}
-                onClick={(e) => handleNavigation(e, "#contact")}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-xs font-bold text-slate-950 bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-300 hover:to-emerald-400 shadow-md shadow-emerald-500/25 transition-all cursor-pointer touch-manipulation group"
-              >
-                <span>Hire Me</span>
-                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </motion.button>
+              <div className="flex items-center gap-2">
+                <CVDownloadButton variant="compact" />
+                <motion.button
+                  type="button"
+                  whileTap={{ scale: 0.96 }}
+                  onClick={(e) => handleNavigation(e, "#contact")}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-slate-950 bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-300 hover:to-emerald-400 shadow-md shadow-emerald-500/25 transition-all cursor-pointer touch-manipulation group"
+                >
+                  <span>Hire Me</span>
+                  <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </motion.button>
+              </div>
             </div>
           </motion.div>
         )}
