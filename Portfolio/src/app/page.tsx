@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
@@ -10,10 +11,30 @@ import { Projects } from "@/components/Projects";
 import { Timeline } from "@/components/Timeline";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
-import { IntroLoader } from "@/components/IntroLoader";
+import {
+  detectPerformanceTier,
+  setStoredIntroSeen,
+} from "@/lib/performance-detector";
+
+// Dynamically import IntroLoader so its JS bundle is only fetched when needed
+const IntroLoader = dynamic(
+  () => import("@/components/IntroLoader").then((mod) => mod.IntroLoader),
+  { ssr: false }
+);
 
 export default function Home() {
-  const [introFinished, setIntroFinished] = useState(false);
+  const [introFinished, setIntroFinished] = useState(true);
+
+  // Check performance tier and session storage on client mount
+  useEffect(() => {
+    const tier = detectPerformanceTier();
+    if (tier.hasSeenIntro || tier.isLowTier) {
+      setIntroFinished(true);
+      setStoredIntroSeen(true);
+    } else {
+      setIntroFinished(false);
+    }
+  }, []);
 
   // Prevent scroll during cinematic intro loading
   useEffect(() => {
@@ -27,6 +48,11 @@ export default function Home() {
     };
   }, [introFinished]);
 
+  const handleReplayIntro = () => {
+    setStoredIntroSeen(false);
+    setIntroFinished(false);
+  };
+
   return (
     <>
       <AnimatePresence mode="wait">
@@ -38,29 +64,29 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* Global Fixed Navbar - Placed outside transformed motion container for flawless mobile click handling */}
-      <Navbar onReplayIntro={() => setIntroFinished(false)} />
+      {/* Global Fixed Navbar */}
+      <Navbar onReplayIntro={handleReplayIntro} />
 
       <div className="relative min-h-screen bg-slate-50 dark:bg-[#090d16] text-slate-900 dark:text-slate-100 selection:bg-emerald-500/20 selection:text-emerald-500 overflow-x-clip">
         <motion.main
-          initial={{ opacity: 0, scale: 0.98, y: 20 }}
-          animate={
-            introFinished
-              ? { opacity: 1, scale: 1, y: 0 }
-              : { opacity: 0, scale: 0.98, y: 20 }
-          }
-          transition={{
-            duration: 0.8,
-            ease: [0.16, 1, 0.3, 1],
-          }}
+          initial={false}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
           className="min-h-screen flex flex-col transition-colors duration-300"
         >
           <Hero />
           <About />
-          <Skills />
-          <Projects />
-          <Timeline />
-          <Contact />
+          <div className="section-defer-render">
+            <Skills />
+          </div>
+          <div className="section-defer-render">
+            <Projects />
+          </div>
+          <div className="section-defer-render">
+            <Timeline />
+          </div>
+          <div className="section-defer-render">
+            <Contact />
+          </div>
           <Footer />
         </motion.main>
       </div>

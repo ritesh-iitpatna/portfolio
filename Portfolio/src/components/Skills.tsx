@@ -154,19 +154,15 @@ export function Skills() {
           ))}
         </div>
 
-        {/* Skills Grid */}
-        <motion.div
-          layout
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-        >
-          <AnimatePresence>
+        {/* Skills Grid (GPU compositor optimized, zero layout-thrashing) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <AnimatePresence mode="wait">
             {filtered.map((skill, index) => (
               <motion.div
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.2, delay: index * 0.02 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.18, delay: Math.min(index * 0.015, 0.2) }}
                 key={`${skill.category}-${skill.name}`}
                 className={`p-4 rounded-2xl border transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1 backdrop-blur-md ${
                   skill.highlight
@@ -211,7 +207,7 @@ export function Skills() {
               </motion.div>
             ))}
           </AnimatePresence>
-        </motion.div>
+        </div>
 
         {/* Structured Category Bento Cards */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">

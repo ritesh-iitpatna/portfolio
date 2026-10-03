@@ -96,6 +96,21 @@ body {
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
 }
 
+/* High-Performance Fallback for Low-Spec / Mobile Devices (avoids expensive GPU backdrop passes) */
+.low-power-mode .glass-card,
+@media (max-width: 768px) {
+  .glass-card {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(255, 255, 255, 0.95);
+  }
+  .dark .glass-card {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(15, 23, 42, 0.94);
+  }
+}
+
 .glass-surface {
   background: rgba(255, 255, 255, 0.65);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
@@ -108,6 +123,20 @@ body {
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   backdrop-filter: blur(16px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.low-power-mode .glass-surface,
+@media (max-width: 768px) {
+  .glass-surface {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(255, 255, 255, 0.96);
+  }
+  .dark .glass-surface {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(15, 23, 42, 0.95);
+  }
 }
 
 .glass-input {
@@ -137,6 +166,27 @@ body {
   box-shadow: 0 0 20px -3px rgba(16, 185, 129, 0.35);
 }
 
+.low-power-mode .glass-input,
+@media (max-width: 768px) {
+  .glass-input,
+  .dark .glass-input {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* Offscreen Section Rendering Performance Deferral */
+.section-defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 700px;
+}
+
+/* Hardware Composite Layer Acceleration */
+.gpu-layer {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
 /* YouTube-Style Ambient Glow for Header & Featured Containers */
 .ambient-glow-header {
   position: absolute;
@@ -155,6 +205,13 @@ body {
 .dark .ambient-glow-header {
   background: radial-gradient(55% 100% at 50% 0%, rgba(16, 185, 129, 0.45) 0%, rgba(56, 189, 248, 0.3) 45%, transparent 100%);
   filter: blur(32px);
+}
+
+.low-power-mode .ambient-glow-header,
+@media (max-width: 768px) {
+  .ambient-glow-header {
+    display: none;
+  }
 }
 
 .ambient-card-glow {
@@ -195,6 +252,13 @@ body {
 
 .animate-ambient-pulse {
   animation: ambientPulse 8s ease-in-out infinite;
+}
+
+.low-power-mode .animate-ambient-pulse,
+@media (max-width: 768px), (prefers-reduced-motion: reduce) {
+  .animate-ambient-pulse {
+    animation: none;
+  }
 }
 
 /* Intro Loader Keyframes (Hardware Accelerated & Guaranteed to Render) */

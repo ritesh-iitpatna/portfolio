@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { JavaIcon, MySQLIcon } from "./Icons";
 import { sfx } from "@/lib/sound-fx";
+import { setStoredIntroSeen } from "@/lib/performance-detector";
 
 interface IntroLoaderProps {
   onComplete: () => void;
@@ -88,10 +89,16 @@ export function IntroLoader({ onComplete }: IntroLoaderProps) {
     };
   }, [isMuted]);
 
+  const finishIntro = () => {
+    setStoredIntroSeen(true);
+    onComplete();
+  };
+
   useEffect(() => {
     // Phase 1 start sound (only plays if unmuted)
-    sfx.resumeAudioContext();
-    sfx.playChargeHum();
+    if (!isMuted) {
+      sfx.playChargeHum();
+    }
 
     // 1 -> 2: Collision Impact at 1.05s
     const t1 = setTimeout(() => {
@@ -132,14 +139,14 @@ export function IntroLoader({ onComplete }: IntroLoaderProps) {
       setPhase(6);
       sfx.playWarpSweep();
       setTimeout(() => {
-        onComplete();
+        finishIntro();
       }, 550);
     }, 5700);
 
     // Keyboard 'Escape' or Space to immediately skip intro
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" || e.code === "Space") {
-        onComplete();
+        finishIntro();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -158,7 +165,7 @@ export function IntroLoader({ onComplete }: IntroLoaderProps) {
       window.removeEventListener("keydown", handleKeyDown);
       sfx.setMuted(true);
     };
-  }, [onComplete]);
+  }, [onComplete, isMuted]);
 
   return (
     <motion.div
@@ -171,10 +178,10 @@ export function IntroLoader({ onComplete }: IntroLoaderProps) {
       {/* 1. CINEMATIC AMBIENT LIGHTING & PERSPECTIVE GRID */}
       {/* ========================================================================= */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Glow Spheres */}
-        <div className="absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full bg-emerald-500/15 blur-[140px]" />
-        <div className="absolute -bottom-32 -right-32 w-[600px] h-[600px] rounded-full bg-cyan-500/15 blur-[140px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-emerald-600/10 blur-[160px]" />
+        {/* Glow Spheres (Rendered on tablet/desktop to save mobile GPU fillrate) */}
+        <div className="hidden sm:block absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full bg-emerald-500/15 blur-[140px]" />
+        <div className="hidden sm:block absolute -bottom-32 -right-32 w-[600px] h-[600px] rounded-full bg-cyan-500/15 blur-[140px]" />
+        <div className="hidden sm:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-emerald-600/10 blur-[160px]" />
 
         {/* Cyber perspective grid on ground */}
         <div
@@ -188,24 +195,24 @@ export function IntroLoader({ onComplete }: IntroLoaderProps) {
           }}
         />
 
-        {/* Ambient Speed Streaks (Active during running phase) */}
+        {/* Ambient Speed Streaks (Active during running phase, optimized to 6 streaks) */}
         {phase === 5 && (
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {[...Array(12)].map((_, i) => (
+            {[...Array(6)].map((_, i) => (
               <motion.div
                 key={i}
                 initial={{ x: "120vw", opacity: 0 }}
                 animate={{ x: "-120vw", opacity: [0, 0.8, 0.8, 0] }}
                 transition={{
                   repeat: Infinity,
-                  duration: 0.55 + (i % 4) * 0.12,
-                  delay: i * 0.08,
+                  duration: 0.55 + (i % 3) * 0.12,
+                  delay: i * 0.1,
                   ease: "linear",
                 }}
                 style={{
-                  top: `${10 + i * 7}%`,
+                  top: `${12 + i * 14}%`,
                   height: i % 2 === 0 ? "2px" : "1px",
-                  width: `${90 + (i % 4) * 50}px`,
+                  width: `${90 + (i % 3) * 50}px`,
                 }}
                 className="absolute rounded-full bg-gradient-to-r from-transparent via-cyan-400 to-emerald-300"
               />
@@ -254,7 +261,7 @@ export function IntroLoader({ onComplete }: IntroLoaderProps) {
             Press [Esc] or
           </span>
           <button
-            onClick={onComplete}
+            onClick={finishIntro}
             className="text-xs text-slate-300 hover:text-white px-3.5 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 hover:border-emerald-500/50 font-mono cursor-pointer transition-all flex items-center gap-1.5 shadow-lg group"
           >
             <span>Skip Intro</span>

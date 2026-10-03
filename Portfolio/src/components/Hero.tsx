@@ -39,9 +39,9 @@ export function Hero() {
 
   return (
     <section id="hero" className="scroll-mt-24 relative pt-28 pb-16 md:pt-36 md:pb-24 overflow-hidden bg-grid-pattern">
-      {/* Glow gradient backdrops */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[350px] bg-emerald-500/15 dark:bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute top-1/3 right-10 w-[350px] h-[300px] bg-cyan-500/15 dark:bg-cyan-500/10 blur-[100px] rounded-full pointer-events-none" />
+      {/* Glow gradient backdrops (Optimized for mobile GPUs) */}
+      <div className="hidden sm:block absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[350px] bg-emerald-500/15 dark:bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="hidden sm:block absolute top-1/3 right-10 w-[350px] h-[300px] bg-cyan-500/15 dark:bg-cyan-500/10 blur-[100px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">

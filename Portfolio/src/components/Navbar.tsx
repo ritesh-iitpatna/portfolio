@@ -42,9 +42,10 @@ export function Navbar({ onReplayIntro }: NavbarProps) {
   const isManualScroll = useRef(false);
   const manualScrollTimer = useRef<NodeJS.Timeout | null>(null);
 
-  // Scroll detection & active section spy
+  // Scroll detection & active section spy (Throttled for mobile performance)
   useEffect(() => {
     let ticking = false;
+    let lastSpyTime = 0;
 
     const handleScroll = () => {
       if (ticking) return;
@@ -52,14 +53,20 @@ export function Navbar({ onReplayIntro }: NavbarProps) {
 
       requestAnimationFrame(() => {
         ticking = false;
-        setIsScrolled(window.scrollY > 20);
+        const nextScrolled = window.scrollY > 20;
+        setIsScrolled((prev) => (prev !== nextScrolled ? nextScrolled : prev));
 
         // Don't override activeSection if user just clicked a nav link
         if (isManualScroll.current) return;
 
+        const now = Date.now();
+        // Throttle expensive getBoundingClientRect calculations to once per 120ms
+        if (now - lastSpyTime < 120) return;
+        lastSpyTime = now;
+
         // 1. Top of page (Hero section)
         if (window.scrollY < 120) {
-          setActiveSection("");
+          setActiveSection((prev) => (prev !== "" ? "" : prev));
           return;
         }
 
@@ -67,7 +74,7 @@ export function Navbar({ onReplayIntro }: NavbarProps) {
         const scrollBottom = window.innerHeight + window.scrollY;
         const pageHeight = document.documentElement.scrollHeight;
         if (scrollBottom >= pageHeight - 70) {
-          setActiveSection("#contact");
+          setActiveSection((prev) => (prev !== "#contact" ? "#contact" : prev));
           return;
         }
 
@@ -82,10 +89,8 @@ export function Navbar({ onReplayIntro }: NavbarProps) {
           { id: "contact", href: "#contact" },
         ];
 
-        // Detection threshold: just beneath the fixed navbar
         const threshold = 180;
 
-        // Special handling for Education & Achievements on desktop (where they sit side-by-side)
         if (isDesktop) {
           const eduEl = document.getElementById("education");
           if (eduEl) {
@@ -99,7 +104,6 @@ export function Navbar({ onReplayIntro }: NavbarProps) {
           }
         }
 
-        // Primary detection: Find the section that covers the detection threshold
         let targetSection = "";
         for (const item of sectionList) {
           const el = document.getElementById(item.id);
@@ -112,7 +116,6 @@ export function Navbar({ onReplayIntro }: NavbarProps) {
           }
         }
 
-        // Fallback: If between gaps or transitioning, pick the most recent section above threshold
         if (!targetSection) {
           let minDistance = Infinity;
           for (const item of sectionList) {
@@ -131,7 +134,7 @@ export function Navbar({ onReplayIntro }: NavbarProps) {
         }
 
         if (targetSection) {
-          setActiveSection(targetSection);
+          setActiveSection((prev) => (prev !== targetSection ? targetSection : prev));
         }
       });
     };

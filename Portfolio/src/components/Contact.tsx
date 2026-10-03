@@ -13,7 +13,6 @@ import {
   Briefcase,
 } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "./Icons";
-import confetti from "canvas-confetti";
 import { portfolioData } from "@/data/portfolio-data";
 
 export function Contact() {
@@ -22,33 +21,34 @@ export function Contact() {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
 
+  const fireConfetti = async (options: { particleCount: number; spread: number; origin: { y: number } }) => {
+    try {
+      const confetti = (await import("canvas-confetti")).default;
+      confetti(options);
+    } catch {
+      // Silent fallback
+    }
+  };
+
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(personal.email);
     setCopied(true);
-    try {
-      confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: { y: 0.8 },
-      });
-    } catch {
-      // fallback
-    }
+    fireConfetti({
+      particleCount: 50,
+      spread: 60,
+      origin: { y: 0.8 },
+    });
     setTimeout(() => setCopied(false), 2500);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setFormSubmitted(true);
-    try {
-      confetti({
-        particleCount: 80,
-        spread: 70,
-        origin: { y: 0.6 },
-      });
-    } catch {
-      // fallback
-    }
+    fireConfetti({
+      particleCount: 80,
+      spread: 70,
+      origin: { y: 0.6 },
+    });
   };
 
   return (
