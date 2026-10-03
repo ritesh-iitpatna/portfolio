@@ -11,6 +11,8 @@ import {
   Check,
   ArrowUpRight,
   Briefcase,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "./Icons";
 import { portfolioData } from "@/data/portfolio-data";
@@ -19,6 +21,8 @@ export function Contact() {
   const { personal } = portfolioData;
   const [copied, setCopied] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
 
   const fireConfetti = async (options: { particleCount: number; spread: number; origin: { y: number } }) => {
@@ -41,14 +45,50 @@ export function Contact() {
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setFormSubmitted(true);
-    fireConfetti({
-      particleCount: 80,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
+    setIsSubmitting(true);
+    setErrorMessage(null);
+
+    const endpoint = personal.formspreeEndpoint || "https://formspree.io/f/mdekqkvb";
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          _subject: formData.subject ? `[Portfolio Contact] ${formData.subject}` : `[Portfolio Contact] New message from ${formData.name}`,
+          message: formData.message,
+        }),
+      });
+
+      if (response.ok) {
+        setFormSubmitted(true);
+        fireConfetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 },
+        });
+      } else {
+        const data = await response.json().catch(() => null);
+        if (data && data.errors && Array.isArray(data.errors) && data.errors.length > 0) {
+          const formatted = data.errors.map((err: { message?: string }) => err.message).filter(Boolean).join(", ");
+          setErrorMessage(formatted || "There was an issue sending your message. Please try again.");
+        } else {
+          setErrorMessage("Failed to send message. Please try again or reach out directly via email.");
+        }
+      }
+    } catch {
+      setErrorMessage("Network error occurred. Please check your connection or reach out directly via email.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -224,6 +264,7 @@ export function Contact() {
                   <button
                     onClick={() => {
                       setFormSubmitted(false);
+                      setErrorMessage(null);
                       setFormData({ name: "", email: "", subject: "", message: "" });
                     }}
                     className="mt-4 px-6 py-2.5 rounded-xl text-xs font-semibold bg-white/60 dark:bg-slate-800/60 backdrop-blur-md text-slate-800 dark:text-slate-200 border border-white/40 dark:border-white/10 hover:bg-white/80 dark:hover:bg-slate-700 transition-colors cursor-pointer shadow-xs"
@@ -232,70 +273,114 @@ export function Contact() {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form
+                  action={personal.formspreeEndpoint || "https://formspree.io/f/mdekqkvb"}
+                  method="POST"
+                  onSubmit={handleSubmit}
+                  className="space-y-4"
+                >
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      <label htmlFor="contact-name" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                         Your Name
                       </label>
                       <input
+                        id="contact-name"
+                        name="name"
                         type="text"
                         required
+                        disabled={isSubmitting}
                         placeholder="Jane Doe"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl border border-white/60 dark:border-white/10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all shadow-xs"
+                        className="w-full px-4 py-2.5 rounded-xl border border-white/60 dark:border-white/10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all shadow-xs disabled:opacity-60 disabled:cursor-not-allowed"
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      <label htmlFor="contact-email" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                         Your Email
                       </label>
                       <input
+                        id="contact-email"
+                        name="email"
                         type="email"
                         required
+                        disabled={isSubmitting}
                         placeholder="jane@company.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl border border-white/60 dark:border-white/10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all shadow-xs"
+                        className="w-full px-4 py-2.5 rounded-xl border border-white/60 dark:border-white/10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all shadow-xs disabled:opacity-60 disabled:cursor-not-allowed"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    <label htmlFor="contact-subject" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                       Subject
                     </label>
                     <input
+                      id="contact-subject"
+                      name="subject"
                       type="text"
                       required
+                      disabled={isSubmitting}
                       placeholder="Role Opportunity / Collaboration / Referral"
                       value={formData.subject}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl border border-white/60 dark:border-white/10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all shadow-xs"
+                      className="w-full px-4 py-2.5 rounded-xl border border-white/60 dark:border-white/10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all shadow-xs disabled:opacity-60 disabled:cursor-not-allowed"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    <label htmlFor="contact-message" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                       Message
                     </label>
                     <textarea
+                      id="contact-message"
+                      name="message"
                       required
                       rows={4}
+                      disabled={isSubmitting}
                       placeholder="Hi Ritesh, I came across your portfolio and would love to connect..."
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl border border-white/60 dark:border-white/10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all resize-none shadow-xs"
+                      className="w-full px-4 py-2.5 rounded-xl border border-white/60 dark:border-white/10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all resize-none shadow-xs disabled:opacity-60 disabled:cursor-not-allowed"
                     />
                   </div>
 
+                  {errorMessage && (
+                    <div className="p-3.5 rounded-xl text-xs bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 flex items-start gap-2.5">
+                      <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <span>{errorMessage}</span>
+                        <div className="mt-1">
+                          <a
+                            href={`mailto:${personal.email}?subject=${encodeURIComponent(formData.subject || "Portfolio Contact")}`}
+                            className="underline hover:text-rose-500 font-semibold"
+                          >
+                            Click here to email me directly ({personal.email})
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <button
                     type="submit"
-                    className="w-full py-3 px-6 rounded-xl font-semibold text-sm text-slate-950 bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-300 hover:to-emerald-400 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/45 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    disabled={isSubmitting}
+                    className="w-full py-3 px-6 rounded-xl font-semibold text-sm text-slate-950 bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-300 hover:to-emerald-400 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/45 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:shadow-none"
                   >
-                    <Send className="w-4 h-4" />
-                    <span>Send Message</span>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Sending Message...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        <span>Send Message</span>
+                      </>
+                    )}
                   </button>
                 </form>
               )}
