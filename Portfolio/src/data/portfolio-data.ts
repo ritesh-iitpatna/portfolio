@@ -55,7 +55,6 @@ export const portfolioData = {
     phone: "+91 7217845884",
     phoneRaw: "7217845884",
     location: "New Delhi - 110020, India",
-    formspreeEndpoint: "https://formspree.io/f/mdekqkvb",
     workPreferences: [
       "Open to Remote",
       "Open to Hybrid",

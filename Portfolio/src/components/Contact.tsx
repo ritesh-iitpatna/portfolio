@@ -50,25 +50,23 @@ export function Contact() {
     setIsSubmitting(true);
     setErrorMessage(null);
 
-    const endpoint = personal.formspreeEndpoint || "https://formspree.io/f/mdekqkvb";
-
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Accept": "application/json",
         },
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
           subject: formData.subject,
-          _subject: formData.subject ? `[Portfolio Contact] ${formData.subject}` : `[Portfolio Contact] New message from ${formData.name}`,
           message: formData.message,
         }),
       });
 
-      if (response.ok) {
+      const data = await response.json().catch(() => null);
+
+      if (response.ok && data?.success) {
         setFormSubmitted(true);
         fireConfetti({
           particleCount: 80,
@@ -76,13 +74,9 @@ export function Contact() {
           origin: { y: 0.6 },
         });
       } else {
-        const data = await response.json().catch(() => null);
-        if (data && data.errors && Array.isArray(data.errors) && data.errors.length > 0) {
-          const formatted = data.errors.map((err: { message?: string }) => err.message).filter(Boolean).join(", ");
-          setErrorMessage(formatted || "There was an issue sending your message. Please try again.");
-        } else {
-          setErrorMessage("Failed to send message. Please try again or reach out directly via email.");
-        }
+        setErrorMessage(
+          data?.error || "Failed to send message. Please try again or reach out directly via email."
+        );
       }
     } catch {
       setErrorMessage("Network error occurred. Please check your connection or reach out directly via email.");
@@ -274,7 +268,7 @@ export function Contact() {
                 </div>
               ) : (
                 <form
-                  action={personal.formspreeEndpoint || "https://formspree.io/f/mdekqkvb"}
+                  action="/api/contact"
                   method="POST"
                   onSubmit={handleSubmit}
                   className="space-y-4"
