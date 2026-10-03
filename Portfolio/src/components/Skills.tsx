@@ -156,7 +156,7 @@ export function Skills() {
 
         {/* Skills Grid (GPU compositor optimized, zero layout-thrashing) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <AnimatePresence mode="wait">
+          <AnimatePresence>
             {filtered.map((skill, index) => (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
