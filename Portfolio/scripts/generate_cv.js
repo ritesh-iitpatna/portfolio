@@ -71,38 +71,64 @@ async function buildInteractiveCV() {
     y -= 12;
   }
 
-  // Helper: Draw word-wrapped text with optional indent
-  function drawWrappedText(text, fontSize, font, lineHeight, color = colorBlack, indent = 0) {
-    const words = text.split(' ');
-    let currentLine = '';
+  // Helper: Draw rich word-wrapped text with inline **bold** support
+  function drawRichWrappedText(text, fontSize, lineHeight, color = colorBlack, indent = 0) {
+    const parts = text.split('**');
+    const tokens = [];
+    for (let i = 0; i < parts.length; i++) {
+      if (!parts[i]) continue;
+      const isBold = (i % 2 === 1);
+      const words = parts[i].split(' ');
+      for (let w = 0; w < words.length; w++) {
+        const word = words[w];
+        if (word.length > 0) {
+          tokens.push({ text: word, bold: isBold });
+        }
+      }
+    }
+
+    let curLine = [];
+    let curLineWidth = 0;
     const maxW = contentWidth - indent;
 
-    for (const word of words) {
-      const testLine = currentLine ? `${currentLine} ${word}` : word;
-      const testWidth = font.widthOfTextAtSize(testLine, fontSize);
-      if (testWidth > maxW && currentLine) {
-        page.drawText(currentLine, {
-          x: marginX + indent,
+    function flushLine(lineTokens) {
+      let curX = marginX + indent;
+      for (let i = 0; i < lineTokens.length; i++) {
+        const tok = lineTokens[i];
+        const font = tok.bold ? fontBold : fontRoman;
+        page.drawText(tok.text, {
+          x: curX,
           y,
           size: fontSize,
           font,
           color,
         });
-        y -= lineHeight;
-        currentLine = word;
+        curX += font.widthOfTextAtSize(tok.text, fontSize);
+        if (i < lineTokens.length - 1) {
+          curX += fontRoman.widthOfTextAtSize(' ', fontSize);
+        }
+      }
+      y -= lineHeight;
+    }
+
+    for (const tok of tokens) {
+      const font = tok.bold ? fontBold : fontRoman;
+      const tokWidth = font.widthOfTextAtSize(tok.text, fontSize);
+      const spaceWidth = fontRoman.widthOfTextAtSize(' ', fontSize);
+      const addedWidth = curLine.length > 0 ? spaceWidth + tokWidth : tokWidth;
+
+      if (curLineWidth + addedWidth > maxW && curLine.length > 0) {
+        flushLine(curLine);
+        curLine = [tok];
+        curLineWidth = tokWidth;
       } else {
-        currentLine = testLine;
+        curLine.push(tok);
+        curLineWidth += addedWidth;
       }
     }
-    if (currentLine) {
-      page.drawText(currentLine, {
-        x: marginX + indent,
-        y,
-        size: fontSize,
-        font,
-        color,
-      });
-      y -= lineHeight;
+
+    if (curLine.length > 0) {
+      flushLine(curLine);
     }
   }
 
@@ -186,8 +212,8 @@ async function buildInteractiveCV() {
   // ==================== SUMMARY ====================
   drawSection('SUMMARY');
   const summary =
-    'Aspiring Software Developer pursuing an MCA at IIT Patna, with a strong foundation in Core Java, Data Structures & Algorithms, OOP, JDBC, and MySQL. Interested in backend development, problem-solving, and building clean, efficient, and maintainable software applications.';
-  drawWrappedText(summary, 10.2, fontRoman, 14.5, colorBlack);
+    'Aspiring Software Developer pursuing an MCA at IIT Patna, with a strong foundation in **Core Java**, **Data Structures & Algorithms**, **OOP**, **JDBC**, and **MySQL**. Interested in **backend development**, problem-solving, and building clean, efficient, and maintainable software applications using **Git**.';
+  drawRichWrappedText(summary, 10.2, 14.5, colorBlack);
 
   // ==================== TECHNICAL SKILLS ====================
   drawSection('TECHNICAL SKILLS');
@@ -259,14 +285,14 @@ async function buildInteractiveCV() {
   y -= 14;
 
   const proj1Bullets = [
-    'Developed a desktop banking application using Java Swing, AWT, JDBC, and MySQL, supporting login, deposits, withdrawals, fast cash, balance enquiry, PIN change, and mini statements.',
+    'Developed a desktop banking application using **Java Swing, AWT, JDBC, and MySQL**, supporting login, deposits, withdrawals, fast cash, balance enquiry, PIN change, and mini statements.',
     'Implemented input validation, exception handling, and database operations to manage customer and transaction data.',
-    'Used Git and GitHub for source-code management and version control.',
+    'Used **Git and GitHub** for source-code management and version control.',
   ];
 
   for (const b of proj1Bullets) {
     page.drawText('•', { x: marginX + 4, y, size: 10, font: fontRoman, color: colorBlack });
-    drawWrappedText(b, 10, fontRoman, 14, colorBlack, 15);
+    drawRichWrappedText(b, 10, 14, colorBlack, 15);
     y -= 2;
   }
 
@@ -308,14 +334,14 @@ async function buildInteractiveCV() {
   y -= 14;
 
   const proj2Bullets = [
-    'Built a responsive personal portfolio using Next.js, React, TypeScript, and Tailwind CSS, showcasing projects, technical skills, and academic background.',
-    'Created an interactive cinematic intro and responsive animations using Framer Motion, with dark/light themes, glassmorphism UI, Web Audio API, and interactive browser features.',
-    'Leveraged AI-assisted development tools throughout the project for implementation, debugging, UI/UX refinement, and problem-solving.',
+    'Built a responsive personal portfolio using **Next.js, React, TypeScript, and Tailwind CSS**, showcasing projects, technical skills, and academic background.',
+    'Created an interactive cinematic intro and responsive animations using **Framer Motion**, with dark/light themes, glassmorphism UI, Web Audio API, and interactive browser features.',
+    'Leveraged **AI-assisted development tools** throughout the project for implementation, debugging, UI/UX refinement, and problem-solving.',
   ];
 
   for (const b of proj2Bullets) {
     page.drawText('•', { x: marginX + 4, y, size: 10, font: fontRoman, color: colorBlack });
-    drawWrappedText(b, 10, fontRoman, 14, colorBlack, 15);
+    drawRichWrappedText(b, 10, 14, colorBlack, 15);
     y -= 2;
   }
 
@@ -403,7 +429,7 @@ async function buildInteractiveCV() {
 
   for (const b of eduBullets) {
     page.drawText('•', { x: marginX + 4, y, size: 10, font: fontRoman, color: colorBlack });
-    drawWrappedText(b, 10, fontRoman, 14, colorBlack, 15);
+    drawRichWrappedText(b, 10, 14, colorBlack, 15);
     y -= 2;
   }
 
@@ -430,10 +456,9 @@ async function buildInteractiveCV() {
   y -= 13.5;
 
   page.drawText('•', { x: marginX + 4, y, size: 10, font: fontRoman, color: colorBlack });
-  drawWrappedText(
+  drawRichWrappedText(
     'Secured First Rank in Class XI and received the Gold Medal and Student of the Year Award.',
     10,
-    fontRoman,
     14,
     colorBlack,
     15
@@ -460,10 +485,9 @@ async function buildInteractiveCV() {
   y -= 13.5;
 
   page.drawText('•', { x: marginX + 4, y, size: 10, font: fontRoman, color: colorBlack });
-  drawWrappedText(
+  drawRichWrappedText(
     'Secured 2nd Position in a school-level mental mathematics competition involving students from multiple schools.',
     10,
-    fontRoman,
     14,
     colorBlack,
     15
@@ -473,7 +497,7 @@ async function buildInteractiveCV() {
   const pdfBytes = await doc.save();
   const destPath = path.resolve(__dirname, '../public/Ritesh_Kumar_Resume.pdf');
   fs.writeFileSync(destPath, pdfBytes);
-  console.log('Successfully compiled and saved interactive CV with balanced layout to:', destPath);
+  console.log('Successfully compiled and saved interactive CV with bold keywords to:', destPath);
 }
 
 buildInteractiveCV().catch(err => {

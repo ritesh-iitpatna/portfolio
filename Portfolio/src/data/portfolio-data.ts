@@ -69,7 +69,7 @@ export const portfolioData = {
     resumeUrl: "/Ritesh_Kumar_Resume.pdf",
     resumeFilename: "Ritesh_Kumar_Resume.pdf",
     summary:
-      "Aspiring Software Developer with a strong foundation in Core Java, Data Structures & Algorithms, and MySQL. Skilled in problem-solving and backend development, with a focus on building efficient, scalable applications and continuously enhancing technical expertise.",
+      "Aspiring Software Developer pursuing an MCA at IIT Patna, with a strong foundation in Core Java, Data Structures & Algorithms, OOP, JDBC, and MySQL. Interested in backend development, problem-solving, and building clean, efficient, and maintainable software applications using Git.",
     highlights: [
       "Pursuing MCA in Software Engineering from IIT Patna × IIIT Ranchi",
       "Specialized in Core Java, JDBC, Object-Oriented Programming & MySQL",
