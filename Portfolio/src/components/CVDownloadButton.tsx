@@ -37,9 +37,13 @@ export function CVDownloadButton({
   const [isChromeTrayActive, setIsChromeTrayActive] = useState(false);
   const [mounted, setMounted] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const timersRef = useRef<NodeJS.Timeout[]>([]);
 
   useEffect(() => {
     setMounted(true);
+    return () => {
+      timersRef.current.forEach(clearTimeout);
+    };
   }, []);
 
   // Update target destination coordinates (top-right Chrome download location)
@@ -78,6 +82,10 @@ export function CVDownloadButton({
   const handleStartDownload = () => {
     if (phase !== "idle") return;
 
+    // Clear any previous running timers
+    timersRef.current.forEach(clearTimeout);
+    timersRef.current = [];
+
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       setButtonRect({
@@ -94,17 +102,19 @@ export function CVDownloadButton({
     setPhase("expanding");
 
     // 2. A4 paper rolls out from slot quickly in EXACTLY 0.50 seconds (250ms - 750ms)
-    setTimeout(() => {
+    const t1 = setTimeout(() => {
       setPhase("rolling");
     }, 240);
+    timersRef.current.push(t1);
 
     // 3. Envelope appears and paper slides into envelope (750ms - 1050ms)
-    setTimeout(() => {
+    const t2 = setTimeout(() => {
       setPhase("packing");
     }, 760);
+    timersRef.current.push(t2);
 
     // 4. Sealed envelope flies to Chrome top-right download corner (1050ms - 1480ms)
-    setTimeout(() => {
+    const t3 = setTimeout(() => {
       // Re-capture button rect in case user moved or scrolled
       if (buttonRef.current) {
         const rect = buttonRef.current.getBoundingClientRect();
@@ -117,9 +127,10 @@ export function CVDownloadButton({
       }
       setPhase("flying");
     }, 1080);
+    timersRef.current.push(t3);
 
     // 5. Envelope arrives at Chrome target (1500ms)
-    setTimeout(() => {
+    const t4 = setTimeout(() => {
       setIsChromeTrayActive(true);
       triggerNativeDownload();
 
@@ -139,26 +150,37 @@ export function CVDownloadButton({
         // Fallback gracefully if confetti fails
       }
     }, 1500);
+    timersRef.current.push(t4);
 
     // 6. Complete and reset state
-    setTimeout(() => {
+    const t5 = setTimeout(() => {
       setPhase("completed");
     }, 1600);
+    timersRef.current.push(t5);
 
-    setTimeout(() => {
+    const t6 = setTimeout(() => {
       setIsChromeTrayActive(false);
     }, 2600);
+    timersRef.current.push(t6);
 
-    setTimeout(() => {
+    const t7 = setTimeout(() => {
       setPhase("idle");
     }, 3400);
+    timersRef.current.push(t7);
   };
 
   const isAnimating = phase !== "idle" && phase !== "completed";
 
-  // Compute flight start point centered on button top
+  // Check if button is positioned near the top edge of viewport (e.g. inside Navbar)
+  const isNearTop = (buttonRect?.top ?? 100) < 90;
+
+  // Compute flight start point centered on button
   const startX = buttonRect ? buttonRect.left + buttonRect.width / 2 - 28 : 0;
-  const startY = buttonRect ? buttonRect.top - 35 : 0;
+  const startY = buttonRect
+    ? isNearTop
+      ? buttonRect.top + buttonRect.height + 14
+      : buttonRect.top - 35
+    : 0;
 
   return (
     <>
@@ -185,7 +207,7 @@ export function CVDownloadButton({
           }}
           transition={{ type: "spring", stiffness: 350, damping: 28 }}
         >
-          {/* Printer/Dispenser Output Slot on top edge */}
+          {/* Printer/Dispenser Output Slot */}
           <AnimatePresence>
             {(phase === "expanding" ||
               phase === "rolling" ||
@@ -195,7 +217,7 @@ export function CVDownloadButton({
                 animate={{ scaleX: 1, opacity: 1 }}
                 exit={{ scaleX: 0, opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="absolute -top-1 left-1/2 -translate-x-1/2 w-24 h-1 rounded-full bg-slate-950 dark:bg-slate-900 border border-emerald-400/80 shadow-[0_0_8px_rgba(52,211,153,0.9)] z-20"
+                className={`absolute ${isNearTop ? "-bottom-1" : "-top-1"} left-1/2 -translate-x-1/2 w-24 h-1 rounded-full bg-slate-950 dark:bg-slate-900 border border-emerald-400/80 shadow-[0_0_8px_rgba(52,211,153,0.9)] z-20`}
               >
                 <div className="w-full h-full bg-emerald-400 animate-pulse" />
               </motion.div>
@@ -266,20 +288,20 @@ export function CVDownloadButton({
           </div>
 
           {/* Local in-button paper rollout stage (before liftoff) */}
-          <div className="absolute left-1/2 -translate-x-1/2 bottom-full pointer-events-none z-30 mb-1">
+          <div className={`absolute left-1/2 -translate-x-1/2 ${isNearTop ? "top-full mt-1.5" : "bottom-full mb-1"} pointer-events-none z-30`}>
             <AnimatePresence>
               {phase === "rolling" && (
                 <motion.div
                   key="a4-sheet"
                   // Exactly 0.5s rollout as requested:
-                  initial={{ y: 25, scaleY: 0, opacity: 0, scaleX: 0.85 }}
-                  animate={{ y: -10, scaleY: 1, opacity: 1, scaleX: 1 }}
-                  exit={{ y: -5, opacity: 0.8, scale: 0.9 }}
+                  initial={{ y: isNearTop ? -25 : 25, scaleY: 0, opacity: 0, scaleX: 0.85 }}
+                  animate={{ y: isNearTop ? 10 : -10, scaleY: 1, opacity: 1, scaleX: 1 }}
+                  exit={{ y: isNearTop ? 5 : -5, opacity: 0.8, scale: 0.9 }}
                   transition={{
                     duration: 0.5,
                     ease: [0.16, 1, 0.3, 1], // fast, smooth deceleration
                   }}
-                  className="w-14 h-20 bg-white dark:bg-slate-100 rounded-sm shadow-2xl border border-slate-300 dark:border-slate-400 p-1 flex flex-col justify-between overflow-hidden origin-bottom transform-gpu"
+                  className={`w-14 h-20 bg-white dark:bg-slate-100 rounded-sm shadow-2xl border border-slate-300 dark:border-slate-400 p-1 flex flex-col justify-between overflow-hidden ${isNearTop ? "origin-top" : "origin-bottom"} transform-gpu`}
                   style={{
                     boxShadow:
                       "0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2)",
@@ -320,15 +342,15 @@ export function CVDownloadButton({
               {phase === "packing" && (
                 <motion.div
                   key="packing-envelope"
-                  initial={{ scale: 0.9, y: 0, opacity: 0 }}
-                  animate={{ scale: 1, y: -12, opacity: 1 }}
+                  initial={{ scale: 0.9, y: isNearTop ? -8 : 0, opacity: 0 }}
+                  animate={{ scale: 1, y: isNearTop ? 12 : -12, opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.28, ease: "easeOut" }}
                   className="relative w-16 h-11 bg-gradient-to-br from-amber-50 to-amber-100 rounded-sm shadow-xl border border-amber-300 flex items-center justify-center overflow-hidden"
                 >
                   {/* Paper folded inside */}
                   <motion.div
-                    initial={{ y: -16, opacity: 1 }}
+                    initial={{ y: isNearTop ? 16 : -16, opacity: 1 }}
                     animate={{ y: 2, opacity: 0.4 }}
                     transition={{ duration: 0.22 }}
                     className="absolute top-1 w-12 h-6 bg-white border border-slate-300 rounded-xs shadow-xs"
