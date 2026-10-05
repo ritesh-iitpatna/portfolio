@@ -367,7 +367,7 @@ async function buildInteractiveCV() {
   });
   y -= 13.5;
 
-  page.drawText('IIT Patna', {
+  page.drawText('IIT Patna \u00D7 IIIT Ranchi', {
     x: marginX,
     y,
     size: 10.2,
