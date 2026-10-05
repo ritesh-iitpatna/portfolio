@@ -498,7 +498,7 @@ export function CVDownloadButton({
                       Downloaded to Chrome
                     </span>
                     <span className="text-[9px] text-emerald-400/90 font-mono leading-none">
-                      Ritesh_Kumar_Resume.pdf
+                      {portfolioData.personal.resumeFilename || "Ritesh_Kumar_Resume.pdf"}
                     </span>
                   </div>
                 </motion.div>
