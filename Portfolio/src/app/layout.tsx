@@ -46,6 +46,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="scroll-smooth">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=sessionStorage.getItem('rk_intro_seen_session')==='true';var p=new URLSearchParams(window.location.search);var f=p.get('intro')==='true'||p.get('intro')==='1';var k=p.get('skipIntro')==='true'||p.get('skipIntro')==='1';var r=window.matchMedia('(prefers-reduced-motion: reduce)').matches;if((!s||f)&&!k&&!r){document.documentElement.classList.add('intro-active');}}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans min-h-screen flex flex-col antialiased selection:bg-emerald-500/20 selection:text-emerald-500`}
       >

@@ -41,6 +41,19 @@ html {
   scroll-padding-top: 5rem;
 }
 
+html.intro-active,
+html.intro-active body {
+  overflow: hidden !important;
+  background-color: #030712 !important;
+}
+
+html.intro-active #main-content,
+html.intro-active header {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 body {
   background-color: var(--background);
   color: var(--foreground);
