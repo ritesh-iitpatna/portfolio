@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Play,
@@ -89,10 +89,11 @@ export function IntroLoader({ onComplete }: IntroLoaderProps) {
     };
   }, [isMuted]);
 
-  const finishIntro = () => {
+  const finishIntro = useCallback(() => {
+    sfx.cleanup();
     setStoredIntroSeen(true);
     onComplete();
-  };
+  }, [onComplete]);
 
   useEffect(() => {
     // Phase 1 start sound (only plays if unmuted)
@@ -163,9 +164,9 @@ export function IntroLoader({ onComplete }: IntroLoaderProps) {
       clearTimeout(p3);
       clearTimeout(p4);
       window.removeEventListener("keydown", handleKeyDown);
-      sfx.setMuted(true);
+      sfx.cleanup();
     };
-  }, [onComplete, isMuted]);
+  }, [finishIntro, isMuted]);
 
   return (
     <motion.div

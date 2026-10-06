@@ -209,6 +209,18 @@ class SoundFXEngine {
       osc.stop(this.ctx.currentTime + 0.55);
     } catch {}
   }
+
+  public cleanup() {
+    if (this.ctx) {
+      try {
+        if (this.ctx.state !== "closed") {
+          this.ctx.close().catch(() => {});
+        }
+      } catch {}
+      this.ctx = null;
+      this.masterGain = null;
+    }
+  }
 }
 
 export const sfx = new SoundFXEngine();

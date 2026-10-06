@@ -25,14 +25,24 @@ const IntroLoader = dynamic(
 export default function Home() {
   const [introFinished, setIntroFinished] = useState(true);
 
-  // Check performance tier and session storage on client mount
+  // Check performance tier, session storage, and URL test override on client mount
   useEffect(() => {
+    const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+    const forceIntro = params?.get("intro") === "true" || params?.get("intro") === "1";
+    const forceSkip = params?.get("skipIntro") === "true" || params?.get("skipIntro") === "1";
+
+    if (forceSkip) {
+      setStoredIntroSeen(true);
+      return;
+    }
+
     const tier = detectPerformanceTier();
-    if (tier.hasSeenIntro || tier.isLowTier) {
-      setIntroFinished(true);
+    if (!forceIntro && (tier.hasSeenIntro || tier.isLowTier)) {
       setStoredIntroSeen(true);
     } else {
-      setIntroFinished(false);
+      requestAnimationFrame(() => {
+        setIntroFinished(false);
+      });
     }
   }, []);
 
@@ -48,11 +58,6 @@ export default function Home() {
     };
   }, [introFinished]);
 
-  const handleReplayIntro = () => {
-    setStoredIntroSeen(false);
-    setIntroFinished(false);
-  };
-
   return (
     <>
       <AnimatePresence mode="wait">
@@ -65,7 +70,7 @@ export default function Home() {
       </AnimatePresence>
 
       {/* Global Fixed Navbar */}
-      <Navbar onReplayIntro={handleReplayIntro} />
+      <Navbar />
 
       <div className="relative min-h-screen bg-slate-50 dark:bg-[#090d16] text-slate-900 dark:text-slate-100 selection:bg-emerald-500/20 selection:text-emerald-500 overflow-x-clip">
         <motion.main
