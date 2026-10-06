@@ -66,8 +66,8 @@ export const portfolioData = {
       linkedin: "https://www.linkedin.com/in/ritesh-iitpatna",
       email: "mailto:ritesh.iitpatna@gmail.com",
     },
-    resumeUrl: "/Ritesh_Kumar_Resume.pdf",
-    resumeFilename: "Ritesh_Kumar_Resume.pdf",
+    resumeUrl: "/api/resume",
+    resumeFilename: "Resume.pdf",
     summary:
       "Aspiring Software Developer pursuing an MCA at IIT Patna, with a strong foundation in Core Java, Data Structures & Algorithms, OOP, JDBC, and MySQL. Interested in backend development, problem-solving, and building clean, efficient, and maintainable software applications using Git.",
     highlights: [

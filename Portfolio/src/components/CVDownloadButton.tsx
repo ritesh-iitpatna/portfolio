@@ -18,10 +18,7 @@ export function CVDownloadButton({
   const [downloaded, setDownloaded] = useState(false);
   const resetTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const resumeUrl =
-    portfolioData.personal.resumeUrl || "/Ritesh_Kumar_Resume.pdf";
-  const resumeFilename =
-    portfolioData.personal.resumeFilename || "Ritesh_Kumar_Resume.pdf";
+  const resumeUrl = portfolioData.personal.resumeUrl || "/api/resume";
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     // Fire celebratory confetti on click
@@ -54,7 +51,7 @@ export function CVDownloadButton({
   return (
     <motion.a
       href={resumeUrl}
-      download={resumeFilename}
+      download
       target="_blank"
       rel="noopener noreferrer"
       onClick={handleClick}
